@@ -19,7 +19,7 @@ entity atlys_remote_terminal_pb is
  --            serial_out : out std_logic;
              switch     : in  std_logic_vector(7 downto 0);
 				 btn			: in std_logic_vector (3 downto 0);
-             led        : out std_logic_vector(7 downto 0)
+             Led        : out std_logic_vector(7 downto 0)
 				 
          );
 end atlys_remote_terminal_pb;
@@ -137,7 +137,7 @@ begin
 --===============================================================
 
 	in_port <=  btn(3 downto 0) & "0000" when (port_id = x"07") else
-					switch when (port_id = x"AF") else
+					"0000" & switch(3 downto 0) when (port_id = x"AF") else
 					(others => '0');
 --===============================================================
 ---------------------OUTPUT_LOGIC--------------------------------
@@ -147,7 +147,7 @@ begin
 	begin
 		-- <= (others => '0');
 		if port_id = x"07" and write_strobe = '1' then
-			led <= out_port;
+			Led <= out_port;
 		end if;
 	end process;
 
