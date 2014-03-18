@@ -15,8 +15,8 @@ entity atlys_remote_terminal_pb is
     port (
              clk        : in  std_logic;
              reset      : in  std_logic;
- --            serial_in  : in  std_logic;
- --            serial_out : out std_logic;
+             serial_in  : in  std_logic;
+             serial_out : out std_logic;
              switch     : in  std_logic_vector(7 downto 0);
 				 btn			: in std_logic_vector (3 downto 0);
              Led        : out std_logic_vector(7 downto 0)
@@ -63,6 +63,42 @@ architecture Behavioral of atlys_remote_terminal_pb is
                     rdl : out std_logic;                    
                     clk : in std_logic);
   end component;
+  
+  COMPONENT uart_rx6
+	PORT(
+		serial_in : IN std_logic;
+		en_16_x_baud : IN std_logic;
+		buffer_read : IN std_logic;
+		buffer_reset : IN std_logic;
+		clk : IN std_logic;          
+		data_out : OUT std_logic_vector(7 downto 0);
+		buffer_data_present : OUT std_logic;
+		buffer_half_full : OUT std_logic;
+		buffer_full : OUT std_logic
+		);
+	END COMPONENT;
+	
+	COMPONENT uart_tx6
+	PORT(
+		data_in : IN std_logic_vector(7 downto 0);
+		en_16_x_baud : IN std_logic;
+		buffer_write : IN std_logic;
+		buffer_reset : IN std_logic;
+		clk : IN std_logic;          
+		serial_out : OUT std_logic;
+		buffer_data_present : OUT std_logic;
+		buffer_half_full : OUT std_logic;
+		buffer_full : OUT std_logic
+		);
+	END COMPONENT;
+	
+	COMPONENT clk_to_baud
+	PORT(
+		clk : IN std_logic;
+		reset : IN std_logic;          
+		baud_16x_en : OUT std_logic
+		);
+	END COMPONENT;
 
 -------------------------------------------------------------------------------------------
 -- Signals
@@ -85,6 +121,7 @@ signal       cpu_reset : std_logic;
 signal             rdl : std_logic;
 signal     int_request : std_logic;
 signal s_in, s_out, swt : std_logic;
+signal baud					: std_logic;
 
 --==================================================================
 ------------------BEGIN PROGRAM-------------------------------------
@@ -106,30 +143,63 @@ begin
                   out_port => out_port,
                read_strobe => read_strobe,
                    in_port => in_port,
-                 interrupt => interrupt,
+                 interrupt => '0',
              interrupt_ack => interrupt_ack,
-                     sleep => kcpsm6_sleep,
+                     sleep => '0',
                      reset => kcpsm6_reset,
                        clk => clk);
  
 
-  kcpsm6_sleep <= '0';
-  interrupt <= interrupt_ack;
 
 
 
 
 
   program_rom: ROM                    --Name to match your PSM file
-    generic map(             C_FAMILY => "V6",   --Family 'S6', 'V6' or '7S'
-                    C_RAM_SIZE_KWORDS => 2,      --Program size '1', '2' or '4'
-                 C_JTAG_LOADER_ENABLE => 1)      --Include JTAG Loader when set to '1' 
-    port map(      address => address,      
-               instruction => instruction,
-                    enable => bram_enable,
-                       rdl => kcpsm6_reset,
-                       clk => clk);
+    generic map(             
+			C_FAMILY => "S6",            --Family 'S6', 'V6' or '7S'
+         C_RAM_SIZE_KWORDS => 1,      --Program size '1', '2' or '4'
+         C_JTAG_LOADER_ENABLE => 1)   --Include JTAG Loader when set to '1' 
+    port map(     
+			address => address,      
+			instruction => instruction,
+         enable => bram_enable,
+         rdl => kcpsm6_reset,
+         clk => clk);
 
+
+ Inst_uart_rx6: uart_rx6 
+	 PORT MAP(
+			serial_in => UartRx,
+			en_16_x_baud => baud,
+			data_out => ,
+			buffer_read => ,
+			buffer_data_present => ,
+			buffer_half_full => ,
+			buffer_full => ,
+			buffer_reset => ,
+			clk => clk
+		);
+		
+	Inst_uart_tx6: uart_tx6 
+		PORT MAP(
+			data_in => ,
+			en_16_x_baud => baud,
+			serial_out => ,
+			buffer_write => ,
+			buffer_data_present => ,
+			buffer_half_full => ,
+			buffer_full => ,
+			buffer_reset => ,
+			clk => clk
+		);
+		
+	Inst_clk_to_baud: clk_to_baud 
+		PORT MAP(
+			clk => clk,
+			reset => reset,
+			baud_16x_en => baud
+		);
 
 
 --===============================================================

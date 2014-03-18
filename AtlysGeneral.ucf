@@ -17,62 +17,33 @@
  NET "btn<1>" LOC = "N4";  # Bank = 3, Pin name = IO_L1P, 	   		   Sch name = BTNU
  NET "btn<2>" LOC = "P4";  # Bank = 3, Pin name = IO_L2P, 	   		   Sch name = BTNL
  NET "btn<3>" LOC = "P3";  # Bank = 3, Pin name = IO_L2N, 	   		   Sch name = BTND
- NET "btn<4>" LOC = "F6";  # Bank = 3, Pin name = IO_L55P_M3A13, 	   Sch name = BTNR
- NET "btn<5>" LOC = "F5";  # Bank = 3, Pin name = IO_L55N_M3A14, 	   Sch name = BTNC
+#NET "btn<4>" LOC = "F6";  # Bank = 3, Pin name = IO_L55P_M3A13, 	   Sch name = BTNR
+#NET "btn<5>" LOC = "F5";  # Bank = 3, Pin name = IO_L55N_M3A14, 	   Sch name = BTNC
  
 # onBoard SWITCHES
- NET "sw<0>" LOC = "A10"; # Bank = 0, Pin name = IO_L37N_GCLK12,      	Sch name = SW0
- NET "sw<1>" LOC = "D14"; # Bank = 0, Pin name = IO_L65P_SCP3,      	Sch name = SW1
- NET "sw<2>" LOC = "C14"; # Bank = 0, Pin name = IO_L65N_SCP2,      	Sch name = SW2
- NET "sw<3>" LOC = "P15"; # Bank = 1, Pin name = IO_L74P_AWAKE_1,       Sch name = SW3
- NET "sw<4>" LOC = "P12"; # Bank = 2, Pin name = IO_L13N_D10,      		Sch name = SW4
- NET "sw<5>" LOC = "R5";  # Bank = 2, Pin name = IO_L48P_D7,      		Sch name = SW5
- NET "sw<6>" LOC = "T5";  # Bank = 2, Pin name = IO_L48N_RDWR_B_VREF_2, Sch name = SW6
- NET "sw<7>" LOC = "E4";  # Bank = 3, Pin name = IO_L54P_M3RESET,       Sch name = SW7
+#NET "sw<0>" LOC = "A10"; # Bank = 0, Pin name = IO_L37N_GCLK12,      	Sch name = SW0
+# NET "sw<1>" LOC = "D14"; # Bank = 0, Pin name = IO_L65P_SCP3,      	Sch name = SW1
+# NET "sw<2>" LOC = "C14"; # Bank = 0, Pin name = IO_L65N_SCP2,      	Sch name = SW2
+# NET "sw<3>" LOC = "P15"; # Bank = 1, Pin name = IO_L74P_AWAKE_1,       Sch name = SW3
+# NET "sw<4>" LOC = "P12"; # Bank = 2, Pin name = IO_L13N_D10,      		Sch name = SW4
+# NET "sw<5>" LOC = "R5";  # Bank = 2, Pin name = IO_L48P_D7,      		Sch name = SW5
+# NET "sw<6>" LOC = "T5";  # Bank = 2, Pin name = IO_L48N_RDWR_B_VREF_2, Sch name = SW6
+# NET "sw<7>" LOC = "E4";  # Bank = 3, Pin name = IO_L54P_M3RESET,       Sch name = SW7
 
 
 
 # onboard HDMI OUT
- NET "HDMIOUTCLKP" LOC = "B6"; # Bank = 0, Pin name = IO_L8P,		  Sch name = TMDS-TX-CLK_P
- NET "HDMIOUTCLKN" LOC = "A6"; # Bank = 0, Pin name = IO_L8N_VREF,	  Sch name = TMDS-TX-CLK_N
- NET "HDMIOUTD0P"  LOC = "D8"; # Bank = 0, Pin name = IO_L11P,		  Sch name = TMDS-TX-0_P
- NET "HDMIOUTD0N"  LOC = "C8"; # Bank = 0, Pin name = IO_L11N,		  Sch name = TMDS-TX-0_N
- NET "HDMIOUTD1P"  LOC = "C7"; # Bank = 0, Pin name = IO_L10P,		  Sch name = TMDS-TX-1_P
- NET "HDMIOUTD1N"  LOC = "A7"; # Bank = 0, Pin name = IO_L10N,		  Sch name = TMDS-TX-1_N
- NET "HDMIOUTD2P"  LOC = "B8"; # Bank = 0, Pin name = IO_L33P,		  Sch name = TMDS-TX-2_P
- NET "HDMIOUTD2N"  LOC = "A8"; # Bank = 0, Pin name = IO_L33N,		  Sch name = TMDS-TX-2_N
- NET "HDMIOUTSCL"  LOC = "D9"; # Bank = 0, Pin name = IO_L34P_GCLK19, Sch name = TMDS-TX-SCL
- NET "HDMIOUTSDA"  LOC = "C9"; # Bank = 0, Pin name = IO_L34N_GCLK18, Sch name = TMDS-TX-SDA
+# NET "HDMIOUTCLKP" LOC = "B6"; # Bank = 0, Pin name = IO_L8P,		  Sch name = TMDS-TX-CLK_P
+# NET "HDMIOUTCLKN" LOC = "A6"; # Bank = 0, Pin name = IO_L8N_VREF,	  Sch name = TMDS-TX-CLK_N
+# NET "HDMIOUTD0P"  LOC = "D8"; # Bank = 0, Pin name = IO_L11P,		  Sch name = TMDS-TX-0_P
+# NET "HDMIOUTD0N"  LOC = "C8"; # Bank = 0, Pin name = IO_L11N,		  Sch name = TMDS-TX-0_N
+# NET "HDMIOUTD1P"  LOC = "C7"; # Bank = 0, Pin name = IO_L10P,		  Sch name = TMDS-TX-1_P
+# NET "HDMIOUTD1N"  LOC = "A7"; # Bank = 0, Pin name = IO_L10N,		  Sch name = TMDS-TX-1_N
+# NET "HDMIOUTD2P"  LOC = "B8"; # Bank = 0, Pin name = IO_L33P,		  Sch name = TMDS-TX-2_P
+# NET "HDMIOUTD2N"  LOC = "A8"; # Bank = 0, Pin name = IO_L33N,		  Sch name = TMDS-TX-2_N
+# NET "HDMIOUTSCL"  LOC = "D9"; # Bank = 0, Pin name = IO_L34P_GCLK19, Sch name = TMDS-TX-SCL
+# NET "HDMIOUTSDA"  LOC = "C9"; # Bank = 0, Pin name = IO_L34N_GCLK18, Sch name = TMDS-TX-SDA
 
-# onboard HDMI IN1 (PMODA)
- NET "HDMIIN1CLKP" LOC = "D11"; # Bank = 0, Pin name = IO_L36P_GCLK15, Sch name = TMDS-RXB-CLK_P
- NET "HDMIIN1CLKN" LOC = "C11"; # Bank = 0, Pin name = IO_L36N_GCLK14, Sch name = TMDS-RXB-CLK_N
- NET "HDMIIN1D0P"  LOC = "G9";  # Bank = 0, Pin name = IO_L38P,		   Sch name = TMDS-RXB-0_P
- NET "HDMIIN1D0N"  LOC = "F9";  # Bank = 0, Pin name = IO_L38N_VREF,   Sch name = TMDS-RXB-0_N
- NET "HDMIIN1D1P"  LOC = "B11"; # Bank = 0, Pin name = IO_L39P,        Sch name = TMDS-RXB-1_P
- NET "HDMIIN1D1N"  LOC = "A11"; # Bank = 0, Pin name = O_L39N,         Sch name = TMDS-RXB-1_N
- NET "HDMIIN1D2P"  LOC = "B12"; # Bank = 0, Pin name = IO_L41P,        Sch name = TMDS-RXB-2_P
- NET "HDMIIN1D2N"  LOC = "A12"; # Bank = 0, Pin name = IO_L41N,        Sch name = TMDS-RXB-2_N
- NET "HDMIIN1SCL"  LOC = "C13"; # Bank = 0, Pin name = IO_L50P,        Sch name = PMOD-SCL
- NET "HDMIIN1SDA"  LOC = "A13"; # Bank = 0, Pin name = IO_L50N,        Sch name = PMOD-SDA
-
-# onboard HDMI IN2
- NET "HDMIIN2CLKP" LOC = "H17"; # Bank = 1, Pin name = IO_L43P_GCLK5_M1DQ4, Sch name = TMDS-RX-CLK_P
- NET "HDMIIN2CLKN" LOC = "H18"; # Bank = 1, Pin name = IO_L43N_GCLK4_M1DQ5, Sch name = TMDS-RX-CLK_N
- NET "HDMIIN2D0P"  LOC = "K17"; # Bank = 1, Pin name = IO_L45P_A1_M1LDQS,   Sch name = TMDS-RX-0_P
- NET "HDMIIN2D0N"  LOC = "K18"; # Bank = 1, Pin name = IO_L45N_A0_M1LDQSN,  Sch name = TMDS-RX-0_N
- NET "HDMIIN2D1P"  LOC = "L17"; # Bank = 1, Pin name = IO_L46P_FCS_B_M1DQ2, Sch name = TMDS-RX-1_P
- NET "HDMIIN2D1N"  LOC = "L18"; # Bank = 1, Pin name = IO_L46N_FOE_B_M1DQ3, Sch name = TMDS-RX-1_N
- NET "HDMIIN2D2P"  LOC = "J16"; # Bank = 1, Pin name = IO_L44P_A3_M1DQ6,    Sch name = TMDS-RX-2_P
- NET "HDMIIN2D2N"  LOC = "J18"; # Bank = 1, Pin name = IO_L44N_A2_M1DQ7,    Sch name = TMDS-RX-2_N
- NET "HDMIIN2SCL"  LOC = "M16"; # Bank = 1, Pin name = IO_L47P_FWE_B_M1DQ0, Sch name = TMDS-RX-SCL
- NET "HDMIIN2SDA"  LOC = "M18"; # Bank = 1, Pin name = IO_L47N_LDC_M1DQ1,   Sch name = TMDS-RX-SDA
-
-
-
- 
-
- 
 # USB UART Connector
  NET "UartRx" LOC = "A16"; # Bank = 0, Pin name = IO_L66N_SCP0, Sch name = USBB-RXD
  NET "UartTx" LOC = "B16"; # Bank = 0, Pin name = IO_L66P_SCP1, Sch name = USBB-TXD
