@@ -214,10 +214,6 @@ if(rising_edge(clk)) then
 	case port_id is
 		when  x"07" => 
 			in_port <= in_port_buff;
---		when  x"08" => 
---			in_port <= in_port_buff;
---		when  x"09" => 
---			in_port <= in_port_buff;
 		when x"0A" =>
 			in_port <= "0000000"& poop;
 		when others => 
