@@ -26,9 +26,11 @@ end atlys_remote_terminal_pb;
 
 
 architecture Behavioral of atlys_remote_terminal_pb is
--------------------------------------------------------------------------------------------
--- Components
--------------------------------------------------------------------------------------------
+
+
+--===========================================================================
+---------------------------------COMPONENTS----------------------------------
+--===========================================================================
 
 
   component kcpsm6 
@@ -100,9 +102,11 @@ architecture Behavioral of atlys_remote_terminal_pb is
 		);
 	END COMPONENT;
 
--------------------------------------------------------------------------------------------
--- Signals
--------------------------------------------------------------------------------------------
+	
+
+--===========================================================================
+---------------------------------SIGNALS-------------------------------------
+--===========================================================================
 
 signal         address : std_logic_vector(11 downto 0);
 signal     instruction : std_logic_vector(17 downto 0);
@@ -131,29 +135,27 @@ signal baud					: std_logic;
 begin
 
   processor: kcpsm6
-    generic map ( hwbuild => X"00", 
-                  interrupt_vector => X"3FF",
-                  scratch_pad_memory_size => 64)
-    port map(      address => address,
-               instruction => instruction,
-               bram_enable => bram_enable,
-                   port_id => port_id,
-              write_strobe => write_strobe,
-            k_write_strobe => k_write_strobe,
-                  out_port => out_port,
-               read_strobe => read_strobe,
-                   in_port => in_port,
-                 interrupt => '0',
-             interrupt_ack => interrupt_ack,
-                     sleep => '0',
-                     reset => kcpsm6_reset,
-                       clk => clk);
+    generic map ( 
+			hwbuild => X"00", 
+         interrupt_vector => X"3FF",
+         scratch_pad_memory_size => 64)
+    port map(      
+			address => address,
+         instruction => instruction,
+         bram_enable => bram_enable,
+         port_id => port_id,
+         write_strobe => write_strobe,
+         k_write_strobe => k_write_strobe,
+         out_port => out_port,
+         read_strobe => read_strobe,
+         in_port => in_port,
+         interrupt => '0',
+         interrupt_ack => interrupt_ack,
+         sleep => '0',
+         reset => kcpsm6_reset,
+         clk => clk
+		);
  
-
-
-
-
-
 
   program_rom: ROM                    --Name to match your PSM file
     generic map(             
@@ -165,7 +167,8 @@ begin
 			instruction => instruction,
          enable => bram_enable,
          rdl => kcpsm6_reset,
-         clk => clk);
+         clk => clk
+		);
 
 
  Inst_uart_rx6: uart_rx6 
@@ -185,7 +188,7 @@ begin
 		PORT MAP(
 			data_in => ,
 			en_16_x_baud => baud,
-			serial_out => ,
+			serial_out => UartTx ,
 			buffer_write => ,
 			buffer_data_present => ,
 			buffer_half_full => ,
@@ -194,12 +197,12 @@ begin
 			clk => clk
 		);
 		
-	Inst_clk_to_baud: clk_to_baud 
-		PORT MAP(
-			clk => clk,
-			reset => reset,
-			baud_16x_en => baud
-		);
+	Inst_clk_to_baud: clk_to_baud PORT MAP(
+		clk => clk,
+		reset => reset,
+		baud_16x_en => baud
+	);
+		
 
 
 --===============================================================
