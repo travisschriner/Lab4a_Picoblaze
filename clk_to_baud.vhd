@@ -22,7 +22,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx primitives in this code.
@@ -30,9 +30,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity clk_to_baud is
-	 generic(
-					N: integer
-				);
     port ( clk         : in std_logic;
            reset       : in std_logic;
            baud_16x_en : out std_logic
@@ -41,28 +38,26 @@ end clk_to_baud;
 
 architecture Behavioral of clk_to_baud is
 
-signal count 		 : integer;
-signal baud_ripple :	std_logic;
+	signal count, count_next : unsigned(10 downto 0);
 
 begin
+
+	count_next <= 	count + 1 when count < 651 else
+						(others => '0');
+						
 	process(clk)
 	begin
-		if(reset = '1') then
-			baud_ripple <= '0';
-			count <= 0;
-		elsif(rising_edge(clk)) then
-			if(count = N) then
-				baud_ripple <='1';
-				count <= 0;
+		if rising_edge(clk) then
+			if reset = '1' then
+				count <= (others => '0');
 			else
-				baud_ripple <= '0';
-				count <= count+1;
+				count <= count_next;
 			end if;
 		end if;
 	end process;
 
+	baud_16x_en <= 	'1' when count = 0 else
+							'0';
 
-
-baud_16x_en <= baud_ripple;
 end Behavioral;
 

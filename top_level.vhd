@@ -16,10 +16,10 @@ entity atlys_remote_terminal_pb is
              clk        : in  std_logic;
              reset      : in  std_logic;
              serial_in  : in  std_logic;
-             serial_out : out std_logic;
-             switch     : in  std_logic_vector(7 downto 0);
-				 btn			: in std_logic_vector (3 downto 0);
-             Led        : out std_logic_vector(7 downto 0)
+             serial_out : out std_logic
+            -- switch     : in  std_logic_vector(7 downto 0);
+				-- btn			: in std_logic_vector (3 downto 0);
+             --Led        : out std_logic_vector(7 downto 0)
 				 
          );
 end atlys_remote_terminal_pb;
@@ -33,38 +33,38 @@ architecture Behavioral of atlys_remote_terminal_pb is
 --===========================================================================
 
 
-  component kcpsm6 
-    generic(                 hwbuild : std_logic_vector(7 downto 0) := X"00";
-                    interrupt_vector : std_logic_vector(11 downto 0) := X"3FF";
-             scratch_pad_memory_size : integer := 64);
-    port (                   address : out std_logic_vector(11 downto 0);
-                         instruction : in std_logic_vector(17 downto 0);
-                         bram_enable : out std_logic;
-                             in_port : in std_logic_vector(7 downto 0);
-                            out_port : out std_logic_vector(7 downto 0);
-                             port_id : out std_logic_vector(7 downto 0);
-                        write_strobe : out std_logic;
-                      k_write_strobe : out std_logic;
-                         read_strobe : out std_logic;
-                           interrupt : in std_logic;
-                       interrupt_ack : out std_logic;
-                               sleep : in std_logic;
-                               reset : in std_logic;
-                                 clk : in std_logic);
-  end component;
-
-
-
-  component ROM                            
-    generic(   C_FAMILY : string := "S6"; 
-               C_RAM_SIZE_KWORDS : integer := 1;
-               C_JTAG_LOADER_ENABLE : integer := 0);
-    Port (      address : in std_logic_vector(11 downto 0);
-            instruction : out std_logic_vector(17 downto 0);
-                 enable : in std_logic;
-                    rdl : out std_logic;                    
-                    clk : in std_logic);
-  end component;
+--  component kcpsm6 
+--    generic(                 hwbuild : std_logic_vector(7 downto 0) := X"00";
+--                    interrupt_vector : std_logic_vector(11 downto 0) := X"3FF";
+--             scratch_pad_memory_size : integer := 64);
+--    port (                   address : out std_logic_vector(11 downto 0);
+--                         instruction : in std_logic_vector(17 downto 0);
+--                         bram_enable : out std_logic;
+--                             in_port : in std_logic_vector(7 downto 0);
+--                            out_port : out std_logic_vector(7 downto 0);
+--                             port_id : out std_logic_vector(7 downto 0);
+--                        write_strobe : out std_logic;
+--                      k_write_strobe : out std_logic;
+--                         read_strobe : out std_logic;
+--                           interrupt : in std_logic;
+--                       interrupt_ack : out std_logic;
+--                               sleep : in std_logic;
+--                               reset : in std_logic;
+--                                 clk : in std_logic);
+--  end component;
+--
+--
+--
+--  component ROM                            
+--    generic(   C_FAMILY : string := "S6"; 
+--               C_RAM_SIZE_KWORDS : integer := 1;
+--               C_JTAG_LOADER_ENABLE : integer := 0);
+--    Port (      address : in std_logic_vector(11 downto 0);
+--            instruction : out std_logic_vector(17 downto 0);
+--                 enable : in std_logic;
+--                    rdl : out std_logic;                    
+--                    clk : in std_logic);
+--  end component;
   
   COMPONENT uart_rx6
 	PORT(
@@ -93,19 +93,6 @@ architecture Behavioral of atlys_remote_terminal_pb is
 		buffer_full : OUT std_logic
 		);
 	END COMPONENT;
-	
-	COMPONENT clk_to_baud
-	generic ( 
-		N: integer
-	);
-	PORT(
-		clk : IN std_logic;
-		reset : IN std_logic;          
-		baud_16x_en : OUT std_logic
-		);
-	END COMPONENT;
-
-	
 
 --===========================================================================
 ---------------------------------SIGNALS-------------------------------------
@@ -178,7 +165,7 @@ begin
 
  Inst_uart_rx6: uart_rx6 
 	 PORT MAP(
-			serial_in => rx_in,
+			serial_in => serial_in,
 			en_16_x_baud => baud,
 			data_out => rx_out,
 			buffer_read => write_data_present ,
@@ -193,7 +180,7 @@ begin
 		PORT MAP(
 			data_in => rx_out ,
 			en_16_x_baud => baud,
-			serial_out => tx_out ,
+			serial_out => serial_out ,
 			buffer_write => read_data_present,
 			buffer_data_present =>  write_data_present,
 			buffer_half_full =>open ,
@@ -202,10 +189,7 @@ begin
 			clk => clk
 		);
 		
-	Inst_clk_to_baud: clk_to_baud 
-		generic map (
-			N => 651 
-		)
+	Inst_clk_to_baud: entity work.clk_to_baud(Behavioral) 
 		PORT MAP(
 			clk => clk,
 			reset => reset,
