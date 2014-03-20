@@ -16,10 +16,9 @@ entity atlys_remote_terminal_pb is
              clk        : in  std_logic;
              reset      : in  std_logic;
              serial_in  : in  std_logic;
-             serial_out : out std_logic
-            -- switch     : in  std_logic_vector(7 downto 0);
-				-- btn			: in std_logic_vector (3 downto 0);
-             --Led        : out std_logic_vector(7 downto 0)
+             serial_out : out std_logic;
+             switch     : in  std_logic_vector(7 downto 0);
+				 Led        : out std_logic_vector(7 downto 0)
 				 
          );
 end atlys_remote_terminal_pb;
@@ -65,6 +64,13 @@ architecture Behavioral of atlys_remote_terminal_pb is
                     rdl : out std_logic;                    
                     clk : in std_logic);
   end component;
+  
+  COMPONENT nibble_to_ascii
+	PORT(
+		nibble : IN std_logic_vector(3 downto 0);          
+		ascii : OUT std_logic_vector(7 downto 0)
+		);
+	END COMPONENT;
   
   COMPONENT uart_rx6
 	PORT(
@@ -116,7 +122,7 @@ signal             rdl : std_logic;
 signal     int_request : std_logic;
 signal s_in, s_out, swt : std_logic;
 signal baud					: std_logic;
-signal rx_out, in_port_buff  : std_logic_vector (7 downto 0);
+signal rx_out, in_port_buff, switch_high, switch_low  : std_logic_vector (7 downto 0);
 signal read_data_present, write_data_present, tx_out, rx_in, poop : std_logic;
 
 --==================================================================
@@ -214,6 +220,10 @@ if(rising_edge(clk)) then
 	case port_id is
 		when  x"07" => 
 			in_port <= in_port_buff;
+		when  x"08" => 
+			in_port <= switch_high;
+		when  x"09" => 
+			in_port <= switch_low;
 		when x"0A" =>
 			in_port <= "0000000"& poop;
 		when others => 
@@ -222,8 +232,21 @@ if(rising_edge(clk)) then
 end if;
 end process;
 				
-			
-		
+----===============================================================
+--------------------------LED_LOGIC--------------------------------
+----===============================================================
+
+	Hi_nibble_to_ascii: nibble_to_ascii PORT MAP(
+		nibble => switch (7 downto 4),
+		ascii =>  switch_high
+	);
+	
+	Low_nibble_to_ascii: nibble_to_ascii PORT MAP(
+		nibble => switch (3 downto 0),
+		ascii => switch_low
+	);
+
+		Led <= out_port;
 	
 
 end Behavioral;
