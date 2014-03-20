@@ -163,38 +163,38 @@ begin
 --		);
 
 
- Inst_uart_rx6: uart_rx6 
-	 PORT MAP(
-			serial_in => serial_in,
-			en_16_x_baud => baud,
-			data_out => rx_out,
-			buffer_read => write_data_present ,
-			buffer_data_present => read_data_present,
-			buffer_half_full => open,
-			buffer_full =>open,
-			buffer_reset => reset,
-			clk => clk
-		);
+	Inst_uart_rx6: uart_rx6 
+	PORT MAP(
+		serial_in => serial_in,
+		en_16_x_baud => baud,
+		data_out => rx_out,
+		buffer_read => write_data_present ,
+		buffer_data_present => read_data_present,
+		buffer_half_full => open,
+		buffer_full =>open,
+		buffer_reset => reset,
+		clk => clk
+	);
 		
 	Inst_uart_tx6: uart_tx6 
-		PORT MAP(
-			data_in => rx_out ,
-			en_16_x_baud => baud,
-			serial_out => serial_out ,
-			buffer_write => read_data_present,
-			buffer_data_present =>  write_data_present,
-			buffer_half_full =>open ,
-			buffer_full => open,
-			buffer_reset => reset,
-			clk => clk
-		);
+	PORT MAP(
+		data_in => rx_out ,
+		en_16_x_baud => baud,
+		serial_out => serial_out ,
+		buffer_write => read_data_present,
+		buffer_data_present =>  write_data_present,
+		buffer_half_full =>open ,
+		buffer_full => open,
+		buffer_reset => reset,
+		clk => clk
+	);
 		
 	Inst_clk_to_baud: entity work.clk_to_baud(Behavioral) 
-		PORT MAP(
-			clk => clk,
-			reset => reset,
-			baud_16x_en => baud
-		);
+	PORT MAP(
+		clk => clk,
+		reset => reset,
+		baud_16x_en => baud
+	);
 			
 
 
