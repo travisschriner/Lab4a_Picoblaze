@@ -33,38 +33,38 @@ architecture Behavioral of atlys_remote_terminal_pb is
 --===========================================================================
 
 
---  component kcpsm6 
---    generic(                 hwbuild : std_logic_vector(7 downto 0) := X"00";
---                    interrupt_vector : std_logic_vector(11 downto 0) := X"3FF";
---             scratch_pad_memory_size : integer := 64);
---    port (                   address : out std_logic_vector(11 downto 0);
---                         instruction : in std_logic_vector(17 downto 0);
---                         bram_enable : out std_logic;
---                             in_port : in std_logic_vector(7 downto 0);
---                            out_port : out std_logic_vector(7 downto 0);
---                             port_id : out std_logic_vector(7 downto 0);
---                        write_strobe : out std_logic;
---                      k_write_strobe : out std_logic;
---                         read_strobe : out std_logic;
---                           interrupt : in std_logic;
---                       interrupt_ack : out std_logic;
---                               sleep : in std_logic;
---                               reset : in std_logic;
---                                 clk : in std_logic);
---  end component;
---
---
---
---  component ROM                            
---    generic(   C_FAMILY : string := "S6"; 
---               C_RAM_SIZE_KWORDS : integer := 1;
---               C_JTAG_LOADER_ENABLE : integer := 0);
---    Port (      address : in std_logic_vector(11 downto 0);
---            instruction : out std_logic_vector(17 downto 0);
---                 enable : in std_logic;
---                    rdl : out std_logic;                    
---                    clk : in std_logic);
---  end component;
+  component kcpsm6 
+    generic(                 hwbuild : std_logic_vector(7 downto 0) := X"00";
+                    interrupt_vector : std_logic_vector(11 downto 0) := X"3FF";
+             scratch_pad_memory_size : integer := 64);
+    port (                   address : out std_logic_vector(11 downto 0);
+                         instruction : in std_logic_vector(17 downto 0);
+                         bram_enable : out std_logic;
+                             in_port : in std_logic_vector(7 downto 0);
+                            out_port : out std_logic_vector(7 downto 0);
+                             port_id : out std_logic_vector(7 downto 0);
+                        write_strobe : out std_logic;
+                      k_write_strobe : out std_logic;
+                         read_strobe : out std_logic;
+                           interrupt : in std_logic;
+                       interrupt_ack : out std_logic;
+                               sleep : in std_logic;
+                               reset : in std_logic;
+                                 clk : in std_logic);
+  end component;
+
+
+
+  component requiredRom                            
+    generic(   C_FAMILY : string := "S6"; 
+               C_RAM_SIZE_KWORDS : integer := 1;
+               C_JTAG_LOADER_ENABLE : integer := 0);
+    Port (      address : in std_logic_vector(11 downto 0);
+            instruction : out std_logic_vector(17 downto 0);
+                 enable : in std_logic;
+                    rdl : out std_logic;                    
+                    clk : in std_logic);
+  end component;
   
   COMPONENT uart_rx6
 	PORT(
@@ -116,8 +116,8 @@ signal             rdl : std_logic;
 signal     int_request : std_logic;
 signal s_in, s_out, swt : std_logic;
 signal baud					: std_logic;
-signal rx_out  : std_logic_vector (7 downto 0);
-signal write_data_present, read_data_present, tx_out, rx_in : std_logic;
+signal rx_out, in_port_buff  : std_logic_vector (7 downto 0);
+signal read_data_present, write_data_present, tx_out, rx_in, poop : std_logic;
 
 --==================================================================
 ------------------BEGIN PROGRAM-------------------------------------
@@ -126,63 +126,64 @@ signal write_data_present, read_data_present, tx_out, rx_in : std_logic;
 
 begin
 
---  processor: kcpsm6
---    generic map ( 
---			hwbuild => X"00", 
---         interrupt_vector => X"3FF",
---         scratch_pad_memory_size => 64)
---    port map(      
---			address => address,
---         instruction => instruction,
---         bram_enable => bram_enable,
---         port_id => port_id,
---         write_strobe => write_strobe,
---         k_write_strobe => k_write_strobe,
---         out_port => out_port,
---         read_strobe => read_strobe,
---         in_port => in_port,
---         interrupt => '0',
---         interrupt_ack => interrupt_ack,
---         sleep => '0',
---         reset => kcpsm6_reset,
---         clk => clk
---		);
--- 
---
---  program_rom: ROM                    --Name to match your PSM file
---    generic map(             
---			C_FAMILY => "S6",            --Family 'S6', 'V6' or '7S'
---         C_RAM_SIZE_KWORDS => 1,      --Program size '1', '2' or '4'
---         C_JTAG_LOADER_ENABLE => 1)   --Include JTAG Loader when set to '1' 
---    port map(     
---			address => address,      
---			instruction => instruction,
---         enable => bram_enable,
---         rdl => kcpsm6_reset,
---         clk => clk
---		);
+  processor: kcpsm6
+    generic map ( 
+			hwbuild => X"00", 
+         interrupt_vector => X"3FF",
+         scratch_pad_memory_size => 64)
+    port map(      
+			address => address,
+         instruction => instruction,
+         bram_enable => bram_enable,
+         port_id => port_id,
+         write_strobe => write_strobe,
+         k_write_strobe => k_write_strobe,
+         out_port => out_port,
+         read_strobe => read_strobe,
+         in_port => in_port,
+         interrupt => '0',
+         interrupt_ack => interrupt_ack,
+         sleep => '0',
+         reset => kcpsm6_reset,
+         clk => clk
+		);
+ 
 
+  program_rom: requiredRom                    --Name to match your PSM file
+    generic map(             
+			C_FAMILY => "S6",            --Family 'S6', 'V6' or '7S'
+         C_RAM_SIZE_KWORDS => 1,      --Program size '1', '2' or '4'
+         C_JTAG_LOADER_ENABLE => 1)   --Include JTAG Loader when set to '1' 
+    port map(     
+			address => address,      
+			instruction => instruction,
+         enable => bram_enable,
+         rdl => kcpsm6_reset,
+         clk => clk
+		);
 
+	--reads in from terminal
 	Inst_uart_rx6: uart_rx6 
 	PORT MAP(
 		serial_in => serial_in,
 		en_16_x_baud => baud,
-		data_out => rx_out,
-		buffer_read => write_data_present ,
-		buffer_data_present => read_data_present,
+		data_out => in_port_buff,
+		buffer_read => read_data_present,
+		buffer_data_present => poop,
 		buffer_half_full => open,
 		buffer_full =>open,
 		buffer_reset => reset,
 		clk => clk
 	);
 		
+	--writes out to terminal 	
 	Inst_uart_tx6: uart_tx6 
 	PORT MAP(
-		data_in => rx_out ,
+		data_in => out_port,
 		en_16_x_baud => baud,
 		serial_out => serial_out ,
-		buffer_write => read_data_present,
-		buffer_data_present =>  write_data_present,
+		buffer_write => write_data_present,
+		buffer_data_present => open,
 		buffer_half_full =>open ,
 		buffer_full => open,
 		buffer_reset => reset,
@@ -199,18 +200,34 @@ begin
 
 
 ----===============================================================
------------------------INPUT_LOGIC---------------------------------
+-----------------------STROBE_LOGIC--------------------------------
 ----===============================================================
---
---	in_port <=  btn(3 downto 0) & "0000" when (port_id = x"07") else
---					"0000" & switch(3 downto 0) when (port_id = x"AF") else
---					(others => '0');
-----===============================================================
------------------------OUTPUT_LOGIC--------------------------------
-----===============================================================
---
---	
---			Led <= out_port;
---		
+read_data_present <= '1' when port_id = x"07" and read_strobe = '1'
+							  else '0';
+							  
+write_data_present <= '1' when port_id = x"07" and write_strobe = '1'
+							  else '0';
+							  
+process(port_id)
+begin
+if(rising_edge(clk)) then
+	case port_id is
+		when  x"07" => 
+			in_port <= in_port_buff;
+--		when  x"08" => 
+--			in_port <= in_port_buff;
+--		when  x"09" => 
+--			in_port <= in_port_buff;
+		when x"0A" =>
+			in_port <= "0000000"& poop;
+		when others => 
+			in_port <= "00000000";
+	end case;
+end if;
+end process;
+				
+			
+		
+	
 
 end Behavioral;

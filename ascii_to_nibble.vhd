@@ -46,17 +46,17 @@ begin
 			when x"41" =>
 				nibble  <= x"A";
 			when x"42" =>
-				nibble <= x"B";
+				nibble 	<= x"B";
 			when x"43" =>
-				nibble <= x"C";
+				nibble 	<= x"C";
 			when x"44" =>
-				nibble <= x"D";
+				nibble 	<= x"D";
 			when x"45" =>
-				nibble <= x"E";
+				nibble 	<= x"E";
 			when x"46" =>
-				nibble <= x"F";
+				nibble 	<= x"F";
 			when	others =>
-				nibble <= x"0";
+				nibble 	<= x"0";
 		end case;
 end process;
 end Behavioral;
