@@ -95,6 +95,9 @@ architecture Behavioral of atlys_remote_terminal_pb is
 	END COMPONENT;
 	
 	COMPONENT clk_to_baud
+	generic ( 
+		N: integer
+	);
 	PORT(
 		clk : IN std_logic;
 		reset : IN std_logic;          
@@ -126,6 +129,8 @@ signal             rdl : std_logic;
 signal     int_request : std_logic;
 signal s_in, s_out, swt : std_logic;
 signal baud					: std_logic;
+signal rx_out  : std_logic_vector (7 downto 0);
+signal write_data_present, read_data_present, tx_out, rx_in : std_logic;
 
 --==================================================================
 ------------------BEGIN PROGRAM-------------------------------------
@@ -134,94 +139,94 @@ signal baud					: std_logic;
 
 begin
 
-  processor: kcpsm6
-    generic map ( 
-			hwbuild => X"00", 
-         interrupt_vector => X"3FF",
-         scratch_pad_memory_size => 64)
-    port map(      
-			address => address,
-         instruction => instruction,
-         bram_enable => bram_enable,
-         port_id => port_id,
-         write_strobe => write_strobe,
-         k_write_strobe => k_write_strobe,
-         out_port => out_port,
-         read_strobe => read_strobe,
-         in_port => in_port,
-         interrupt => '0',
-         interrupt_ack => interrupt_ack,
-         sleep => '0',
-         reset => kcpsm6_reset,
-         clk => clk
-		);
- 
-
-  program_rom: ROM                    --Name to match your PSM file
-    generic map(             
-			C_FAMILY => "S6",            --Family 'S6', 'V6' or '7S'
-         C_RAM_SIZE_KWORDS => 1,      --Program size '1', '2' or '4'
-         C_JTAG_LOADER_ENABLE => 1)   --Include JTAG Loader when set to '1' 
-    port map(     
-			address => address,      
-			instruction => instruction,
-         enable => bram_enable,
-         rdl => kcpsm6_reset,
-         clk => clk
-		);
+--  processor: kcpsm6
+--    generic map ( 
+--			hwbuild => X"00", 
+--         interrupt_vector => X"3FF",
+--         scratch_pad_memory_size => 64)
+--    port map(      
+--			address => address,
+--         instruction => instruction,
+--         bram_enable => bram_enable,
+--         port_id => port_id,
+--         write_strobe => write_strobe,
+--         k_write_strobe => k_write_strobe,
+--         out_port => out_port,
+--         read_strobe => read_strobe,
+--         in_port => in_port,
+--         interrupt => '0',
+--         interrupt_ack => interrupt_ack,
+--         sleep => '0',
+--         reset => kcpsm6_reset,
+--         clk => clk
+--		);
+-- 
+--
+--  program_rom: ROM                    --Name to match your PSM file
+--    generic map(             
+--			C_FAMILY => "S6",            --Family 'S6', 'V6' or '7S'
+--         C_RAM_SIZE_KWORDS => 1,      --Program size '1', '2' or '4'
+--         C_JTAG_LOADER_ENABLE => 1)   --Include JTAG Loader when set to '1' 
+--    port map(     
+--			address => address,      
+--			instruction => instruction,
+--         enable => bram_enable,
+--         rdl => kcpsm6_reset,
+--         clk => clk
+--		);
 
 
  Inst_uart_rx6: uart_rx6 
 	 PORT MAP(
-			serial_in => UartRx,
+			serial_in => rx_in,
 			en_16_x_baud => baud,
-			data_out => ,
-			buffer_read => ,
-			buffer_data_present => ,
-			buffer_half_full => ,
-			buffer_full => ,
-			buffer_reset => ,
+			data_out => rx_out,
+			buffer_read => write_data_present ,
+			buffer_data_present => read_data_present,
+			buffer_half_full => open,
+			buffer_full =>open,
+			buffer_reset => reset,
 			clk => clk
 		);
 		
 	Inst_uart_tx6: uart_tx6 
 		PORT MAP(
-			data_in => ,
+			data_in => rx_out ,
 			en_16_x_baud => baud,
-			serial_out => UartTx ,
-			buffer_write => ,
-			buffer_data_present => ,
-			buffer_half_full => ,
-			buffer_full => ,
-			buffer_reset => ,
+			serial_out => tx_out ,
+			buffer_write => read_data_present,
+			buffer_data_present =>  write_data_present,
+			buffer_half_full =>open ,
+			buffer_full => open,
+			buffer_reset => reset,
 			clk => clk
 		);
 		
-	Inst_clk_to_baud: clk_to_baud PORT MAP(
-		clk => clk,
-		reset => reset,
-		baud_16x_en => baud
-	);
-		
+	Inst_clk_to_baud: clk_to_baud 
+		generic map (
+			N => 651 
+		)
+		PORT MAP(
+			clk => clk,
+			reset => reset,
+			baud_16x_en => baud
+		);
+			
 
 
---===============================================================
----------------------INPUT_LOGIC---------------------------------
---===============================================================
-
-	in_port <=  btn(3 downto 0) & "0000" when (port_id = x"07") else
-					"0000" & switch(3 downto 0) when (port_id = x"AF") else
-					(others => '0');
---===============================================================
----------------------OUTPUT_LOGIC--------------------------------
---===============================================================
-
-	process(port_id, write_strobe)
-	begin
-		-- <= (others => '0');
-		if port_id = x"07" and write_strobe = '1' then
-			Led <= out_port;
-		end if;
-	end process;
+----===============================================================
+-----------------------INPUT_LOGIC---------------------------------
+----===============================================================
+--
+--	in_port <=  btn(3 downto 0) & "0000" when (port_id = x"07") else
+--					"0000" & switch(3 downto 0) when (port_id = x"AF") else
+--					(others => '0');
+----===============================================================
+-----------------------OUTPUT_LOGIC--------------------------------
+----===============================================================
+--
+--	
+--			Led <= out_port;
+--		
 
 end Behavioral;

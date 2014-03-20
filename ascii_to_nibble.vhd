@@ -22,7 +22,7 @@ begin
 	process(ascii)
 	begin
 		
-		if(ascii >= x"30" and ascii <= x"39) then
+		if(ascii >= x"30" and ascii <= x"39") then
 			nibble <= ascii-30;
 		else if (ascii = x"41") then
 			nibble <= x"A";
@@ -38,7 +38,7 @@ begin
 			nibble <= x"F";
 		else 
 			nibble <= x"0";
-		end if
+		end if;
 	end process;
 
 end Behavioral;
