@@ -71,6 +71,13 @@ architecture Behavioral of atlys_remote_terminal_pb is
 		ascii : OUT std_logic_vector(7 downto 0)
 		);
 	END COMPONENT;
+	
+	COMPONENT ascii_to_nibble
+	PORT(
+		ascii : IN std_logic_vector(7 downto 0);          
+		nibble : OUT std_logic_vector(3 downto 0)
+		);
+	END COMPONENT;
   
   COMPONENT uart_rx6
 	PORT(
@@ -122,7 +129,8 @@ signal             rdl : std_logic;
 signal     int_request : std_logic;
 signal s_in, s_out, swt : std_logic;
 signal baud					: std_logic;
-signal rx_out, in_port_buff, switch_high, switch_low  : std_logic_vector (7 downto 0);
+signal rx_out, in_port_buff, switch_high, switch_low, led_high, led_low  : std_logic_vector (7 downto 0);
+signal led_low_nibble, led_high_nibble : std_logic_vector (3 downto 0);
 signal read_data_present, write_data_present, tx_out, rx_in, poop : std_logic;
 
 --==================================================================
@@ -222,8 +230,10 @@ if(rising_edge(clk)) then
 			in_port <= in_port_buff;
 		when  x"08" => 
 			in_port <= switch_high;
+			
 		when  x"09" => 
 			in_port <= switch_low;
+			
 		when x"0A" =>
 			in_port <= "0000000"& poop;
 		when others => 
@@ -231,6 +241,11 @@ if(rising_edge(clk)) then
 	end case;
 end if;
 end process;
+
+ 
+ led_low <= out_port when write_strobe = '1' and port_id <= x"08";
+ led_high <= out_port when write_strobe = '1' and port_id <= x"09";
+ 
 				
 ----===============================================================
 --------------------------LED_LOGIC--------------------------------
@@ -245,8 +260,18 @@ end process;
 		nibble => switch (3 downto 0),
 		ascii => switch_low
 	);
+	
+	High_ascii_to_nibble: ascii_to_nibble PORT MAP(
+		ascii => led_high,
+		nibble => led_high_nibble
+	);
+	
+	Low_ascii_to_nibble: ascii_to_nibble PORT MAP(
+		ascii => led_low,
+		nibble => led_low_nibble
+	);
 
-		Led <= out_port;
+		Led <= led_high_nibble & led_low_nibble;
 	
 
 end Behavioral;
