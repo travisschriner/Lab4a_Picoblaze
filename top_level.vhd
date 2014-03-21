@@ -129,7 +129,7 @@ signal             rdl : std_logic;
 signal     int_request : std_logic;
 signal s_in, s_out, swt : std_logic;
 signal baud					: std_logic;
-signal rx_out, in_port_buff, switch_high, switch_low, led_high, led_low  : std_logic_vector (7 downto 0);
+signal rx_out, in_port_buff, switch_high, switch_low, led_high, led_low, led_low_next, led_high_next  : std_logic_vector (7 downto 0);
 signal led_low_nibble, led_high_nibble : std_logic_vector (3 downto 0);
 signal read_data_present, write_data_present, tx_out, rx_in, poop : std_logic;
 
@@ -243,8 +243,25 @@ end if;
 end process;
 
  
- led_low <= out_port when write_strobe = '1' and port_id <= x"08";
- led_high <= out_port when write_strobe = '1' and port_id <= x"09";
+ led_low_next <= out_port when write_strobe = '1' and port_id = x"08" else
+					  led_low;
+ 
+ 
+ led_high_next <= out_port when write_strobe = '1' and port_id = x"09" else
+						led_high;
+						
+process (clk, reset)
+begin 
+	if (rising_edge(clk)) then
+		if(reset = '1') then
+			led_low <= (others => '0');
+			led_high <= (others => '0');
+		end if;
+		
+		led_low <= led_low_next;
+		led_high <= led_high_next;
+	end if;
+end process;
  
 				
 ----===============================================================
@@ -271,7 +288,8 @@ end process;
 		nibble => led_low_nibble
 	);
 
-		Led <= led_high_nibble & led_low_nibble;
+		Led(7 downto 4) <= led_high_nibble;
+		Led(3 downto 0) <= led_low_nibble;
 	
 
 end Behavioral;
